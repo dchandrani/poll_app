@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:equatable/equatable.dart';
 import 'package:poll_app/src/poll/models/poll.dart';
-import 'package:collection/collection.dart';
 
 import '../poll.dart';
 
@@ -27,9 +26,17 @@ class PollController extends StateNotifier<PollState> {
       state = state.copyWith(status: PollStatus.fetchingPoll);
 
       final poll = await _repository.fetchPoll();
+
+      int totalVotes = 0;
+
+      for (final element in poll.choices) {
+        totalVotes += element.votes;
+      }
+
       state = state.copyWith(
         status: PollStatus.fetchPollSuccess,
         poll: poll,
+        totalVotes: totalVotes,
       );
     } catch (e) {
       state = state.copyWith(
@@ -54,11 +61,18 @@ class PollController extends StateNotifier<PollState> {
         return choice;
       }).toList();
 
+      int totalVotes = 0;
+
+      for (final element in updatedChoices) {
+        totalVotes += element.votes;
+      }
+
       state = state.copyWith(
         status: PollStatus.updatePollSuccess,
         poll: state.poll?.copyWith(
           choices: updatedChoices,
         ),
+        totalVotes: totalVotes,
       );
     } catch (e) {
       state = state.copyWith(

@@ -31,7 +31,9 @@ class Repository {
         choiceSnapshot.docs.map((e) => Choice.fromSnapshot(e)).toList();
 
     final poll = Poll.fromSnapshot(questionSnapshot);
-    return poll.copyWith(choices: choices);
+    return poll.copyWith(
+      choices: choices,
+    );
   }
 
   Future<void> updateVote(
